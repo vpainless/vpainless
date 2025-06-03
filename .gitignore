@@ -1,0 +1,11 @@
+.env
+.env-local
+**.gen.go
+.db
+vultr.pri
+vultr.pub
+
+/data
+/tests/setup.sh
+/scripts/upload.sh
+/out

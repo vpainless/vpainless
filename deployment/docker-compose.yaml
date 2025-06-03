@@ -1,0 +1,50 @@
+services:
+  nginx:
+    image: nginx
+    container_name: nginx
+    restart: "no"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - /etc/ssl/letsencrypt:/etc/ssl/letsencrypt
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - NGINX_PORT=80
+    networks:
+      - vpainless-network
+    depends_on:
+      - vpainless-front
+
+  vpainless-server:
+    image: vpainless-server:latest
+    container_name: vpainless-server
+    volumes:
+      - ./migrations:/migrations
+      - ./data:/data
+      - ./key:/key
+      - ./key.pub:/key.pub
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 20000
+        hard: 40000
+    environment:
+      - DB_DIR=/data
+      - MIGRATIONS_PATH=file:///migrations
+      - VPAINLESS_PRIVATE_KEY=/key
+      - VPAINLESS_PUBLIC_KEY=/key.pub
+    networks:
+      - vpainless-network
+
+  vpainless-front:
+    image: vpainless-front:latest
+    container_name: vpainless-front
+    networks:
+      - vpainless-network
+    depends_on:
+      - vpainless-server
+
+networks:
+  vpainless-network:
+    driver: bridge

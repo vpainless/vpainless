@@ -1,0 +1,520 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Vpainless API
+  description: |-
+    This is a Vpainless server API based on the OpenAPI 3.0 specification.
+    Some useful links:
+    - [Vpainless Source Code](https://github.com/somewhere)
+  contact:
+    email: TODO@example.com
+servers:
+  - url: http://localhost:8080/api
+tags:
+  - name: users
+    description: Operations about users
+  - name: groups
+    description: Operations about groups
+  - name: instances
+    description: Operations about instances
+
+paths:
+  /me:
+    get:
+      tags:
+        - users
+      operationId: GetMe
+      summary: Returns the logged in user info
+      description: |-
+        Returns the information for the registered user in the system given it's credentials.
+
+        This can be used by FE to check if credentials are correct.
+      security:
+        - basicAuth: []
+      responses:
+        "200":
+          description: get logged in user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /users/{id}:
+    get:
+      tags:
+        - users
+      operationId: GetUser
+      summary: Gets a user given it's ID.
+      description: |-
+        Returns the information for the registered user in the system given it's ID.
+      security:
+        - basicAuth: []
+      responses:
+        "200":
+          description: get user given it's id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+        - users
+      operationId: PutUser
+      summary: Updates a user in the system
+      description: |-
+        This is to modify the users in the system.
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: Update successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    parameters:
+      - name: id
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          $ref: "#/components/schemas/UUID"
+
+  /users:
+    get:
+      tags:
+        - users
+      operationId: ListUsers
+      summary: Lists users in the system
+      description: |-
+        This api lists the users in the system. The returned result includes 
+        all the users that the caller can view.
+
+        We do not support pagination for now.
+      security:
+        - basicAuth: []
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Users"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      tags:
+        - users
+      operationId: PostUser
+      summary: Creates a user in the system
+      description: |-
+        This api can be used for two purpose:
+
+        1. Registering clients in the system. They should set their usename and password.
+           Request of this kind should be anonymous, so no authorization header should be set.
+
+        1. To add uses to your group. The called of this request should be an admin of a group.
+           Naturally, admins should be logged in so for these kind of requests, authorization 
+           header is mandatory.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: Username already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          links:
+            GetUserByUserId:
+              operationId: GetUser
+              parameters:
+                id: "$response.body#/id"
+
+              description: >
+                The `id` value returned in the response can be used as
+                the `id` parameter in `GET /users/{id}`.
+
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          links:
+            GetUserByUserId: # <---- arbitrary name for the link
+              operationId: GetUser
+              parameters:
+                id: "$response.body#/id"
+
+              description: >
+                The `id` value returned in the response can be used as
+                the `id` parameter in `GET /users/{id}`.
+
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /groups:
+    post:
+      tags:
+        - groups
+      security:
+        - basicAuth: []
+      operationId: PostGroup
+      summary: Creates a group in the system
+      description: |-
+        Using this, users can create their own group. Only clients can create a group.
+
+        The ID in the request body is ignored. ID of the created group is chosen by the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Group"
+      responses:
+        "201":
+          description: Group created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Group"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /instances/{id}:
+    get:
+      tags:
+        - instances
+      operationId: GetInstance
+      summary: Gets an instance given it's ID.
+      description: |-
+        Returns the information for an instance in the system given it's ID.
+      security:
+        - basicAuth: []
+      responses:
+        "200":
+          description: get instance given it's id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Instance"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - instances
+      operationId: DeleteInstance
+      summary: Deletes an instance given it's ID.
+      description: |-
+        Deletes the instance in the system. It also deletes the instance created by the provided.
+
+        This should be used by clients before renewing instances, to save costs.
+      security:
+        - basicAuth: []
+      responses:
+        "204":
+          description: Successful
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    parameters:
+      - name: id
+        in: path
+        description: ID of pet to use
+        required: true
+        schema:
+          $ref: "#/components/schemas/UUID"
+  /instances:
+    get:
+      tags:
+        - instances
+      security:
+        - basicAuth: []
+      operationId: ListInstances
+      summary: List the instances
+      description: |-
+        Using this, users can list the instances they can view. clients will see
+        the instances associated to them. Group admins can list all the instances
+        associated to their clients.
+      responses:
+        "200":
+          description: Listed instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Instance"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+        - instances
+      security:
+        - basicAuth: []
+      operationId: PostInstance
+      summary: Creates an instance in the system
+      description: |-
+        Using this, users can create an instance in the system. Instance will be created
+        using the default values of the group they are part of.
+      responses:
+        "200":
+          description: Instance existed already.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Instance"
+        "201":
+          description: Instance created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Instance"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    UUID:
+      type: string
+      format: uuid
+      example: "506357a8-2288-4bc3-b798-abae4ebf9d5e"
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        name: uuid
+        path: github.com/gofrs/uuid/v5
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Unauthorized
+    User:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        username:
+          type: string
+          example: "john"
+        password:
+          type: string
+          example: "secret"
+        group_id:
+          $ref: "#/components/schemas/UUID"
+        role:
+          type: string
+          enum: ["client", "admin"]
+          example: "admin"
+
+    Users:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        count:
+          type: integer
+          example: 1
+
+    Group:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        name:
+          type: string
+        vps:
+          type: object
+          properties:
+            provider:
+              type: string
+              enum: ["vultr"]
+              example: "vultr"
+            apikey:
+              type: string
+      example:
+        id: "e5956280-3b50-4ecd-9604-74312ad8bf71"
+        name: "my group"
+        vps:
+          provider: vultr
+          apikey: "<api-key>"
+
+    Instance:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        owner:
+          $ref: "#/components/schemas/UUID"
+        ip:
+          type: string
+          format: ipv4
+        connection_string:
+          type: string
+          format: uri
+        status:
+          type: string
+          enum: ["unknown", "off", "initializing", "ok"]
+      example:
+        id: "e5956280-3b50-4ecd-9604-74312ad8bf71"
+        ip: "192.168.0.1"
+        connection_string: "vless://id@domain.com"
+        status: "ok"
+
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic

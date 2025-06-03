@@ -1,0 +1,51 @@
+version: "2"
+run:
+  concurrency: 4
+  issues-exit-code: 1
+output:
+  formats:
+    text:
+      path: stdout
+      print-linter-name: true
+      print-issued-lines: true
+linters:
+  default: none
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unparam
+    - unused
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - mock_.*_test\.go$
+      - api
+issues:
+  uniq-by-line: true
+formatters:
+  enable:
+    - gofmt
+    - gofumpt
+    - goimports
+  settings:
+    gofmt:
+      rewrite-rules:
+        - pattern: interface{}
+          replacement: any
+    goimports:
+      local-prefixes:
+        - vpainless
+    gofumpt:
+      module-path: vpainless
+  exclusions:
+    generated: lax
+    paths:
+      - mock_.*_test\.go$
+      - api
