@@ -58,13 +58,11 @@ function setup_certificates() {
   export PATH=~/.acme.sh:$PATH
   export DuckDNS_Token="${DUCKDNS_TOKEN}"
 
-  # TODO: remove the staging server
   echo "📄 Issuing certificate for ${CERT_DOMAIN}..."
   ~/.acme.sh/acme.sh --issue \
     --dns dns_duckdns \
     -d "${CERT_DOMAIN}" \
     --keylength ec-256 \
-    --server https://acme-staging-v02.api.letsencrypt.org/directory \
     --force
 
   echo "📂 Installing certs to ${CERT_INSTALL_DIR}..."
@@ -84,7 +82,8 @@ function setup_certificates() {
 
 function run_vpainless() {
   echo "🚀 Running Vpainless..."
-  # TODO: Update git clone https://github.com/abdc/vpainless.git
+  echo "☁️ Cloning Vpainless Repo"
+	git clone https://github.com/vpainless/vpainless.git
   cd vpainless
 
   echo "🔧 Building Docker images..."

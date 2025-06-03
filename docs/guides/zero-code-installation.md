@@ -31,11 +31,18 @@ After setting this up, your VPainLess server will be accessible at `your-subdoma
    ![vultr-0](../images/vultr-0.png)
 3. Click "Add Startup Script". Name the script, e.g., `install-vpainless`. Ensure 'Type' is set to 'boot'.
    ![vultr-1](../images/vultr-1.png)
-4. Insert the following code into your script and save it:
+4. Replace the places holders in the following script with the duckdns subdomain, and token, and create the script in vultr.
 
    ```bash
-   curl -fsSL https://get.docker.com | sh
+   #!/bin/bash
+
+   export DUCKDNS_DOMAIN=<your-duckdns-subdomain>
+   export DUCKDNS_TOKEN=<your-duckdns-token>
+
+   curl -fsSL https://github.com/vpainless/vpainless/releases/download/v0.1.0-alpha/install.sh | sh
    ```
+
+   Examples: `DUCKDNS_DOMAIN=my-vpainless` and `DUCKDNS_TOKEN=00000000-0000-0000-0000-000000000000` (The one you copied before)
 
 Next, deploy your server:
 
