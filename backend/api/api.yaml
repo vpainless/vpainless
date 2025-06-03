@@ -5,9 +5,9 @@ info:
   description: |-
     This is a Vpainless server API based on the OpenAPI 3.0 specification.
     Some useful links:
-    - [Vpainless Source Code](https://github.com/somewhere)
+    - [Vpainless Source Code](https://github.com/vpainless/vpainless)
   contact:
-    email: TODO@example.com
+    email: vpainless@tutamail.com
 servers:
   - url: http://localhost:8080/api
 tags:

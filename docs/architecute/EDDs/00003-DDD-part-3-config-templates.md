@@ -1,4 +1,4 @@
-# EDD 00002: Domain Driven Design - Part 3: Hosting models
+# EDD 00003: Domain Driven Design - Part 3: Hosting models
 
 ## Context
 

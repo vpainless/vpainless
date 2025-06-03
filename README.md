@@ -1,6 +1,6 @@
 # VPainLess
 
-VPainLess is a framework designed to create VLESS VPNs without any barriers.
+VPainLess is a platform designed to create VLESS VPNs without any barriers.
 
 ![vpainless](./docs/images/vpainless-main.png)
 
@@ -22,4 +22,10 @@ For developers, I trust you have the skills to deploy and run this project in yo
 
 After installation, refer to [Setting Up Accounts](./docs/guides/setting-up.md) guide for the initial setup.
 
-## How does Vpainless work?
+## How does VPainLess work?
+
+TBD
+
+## Contributing
+
+TBD

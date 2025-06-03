@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -e
 
 DUCKDNS_DOMAIN="${DUCKDNS_DOMAIN:-}"
 DUCKDNS_TOKEN="${DUCKDNS_TOKEN:-}"
@@ -55,27 +55,26 @@ function setup_certificates() {
 
   echo "📥 Installing acme.sh..."
   curl https://get.acme.sh | sh
-  export PATH=~/.acme.sh:$PATH
   export DuckDNS_Token="${DUCKDNS_TOKEN}"
 
   echo "📄 Issuing certificate for ${CERT_DOMAIN}..."
-  ~/.acme.sh/acme.sh --issue \
+  /.acme.sh/acme.sh --issue \
     --dns dns_duckdns \
     -d "${CERT_DOMAIN}" \
     --keylength ec-256 \
-    --force
+    --server letsencrypt
 
   echo "📂 Installing certs to ${CERT_INSTALL_DIR}..."
   sudo mkdir -p "${CERT_INSTALL_DIR}"
 
-  ~/.acme.sh/acme.sh --install-cert \
+  /.acme.sh/acme.sh --install-cert \
     -d "${CERT_DOMAIN}" \
     --ecc \
     --key-file "${CERT_INSTALL_DIR}/privkey.pem" \
     --fullchain-file "${CERT_INSTALL_DIR}/fullchain.pem"
 
   echo "🔁 Enabling auto-renewal..."
-  ~/.acme.sh/acme.sh --upgrade --auto-upgrade
+  /.acme.sh/acme.sh --upgrade --auto-upgrade
 
   echo "✅ Certificates installed at ${CERT_INSTALL_DIR}"
 }

@@ -39,7 +39,7 @@ After setting this up, your VPainLess server will be accessible at `your-subdoma
    export DUCKDNS_DOMAIN=<your-duckdns-subdomain>
    export DUCKDNS_TOKEN=<your-duckdns-token>
 
-   curl -fsSL https://github.com/vpainless/vpainless/releases/download/v0.1.0-alpha/install.sh | sh
+   curl -fsSL https://github.com/vpainless/vpainless/releases/download/v0.1.0-alpha/install.sh | bash 2>&1 | tee ~/install.log
    ```
 
    Examples: `DUCKDNS_DOMAIN=my-vpainless` and `DUCKDNS_TOKEN=00000000-0000-0000-0000-000000000000` (The one you copied before)
