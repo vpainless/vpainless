@@ -22,10 +22,10 @@ For developers, I trust you have the skills to deploy and run this project in yo
 
 After installation, refer to [Setting Up Accounts](./docs/guides/setting-up.md) guide for the initial setup.
 
-## How does VPainLess work?
+## How Does VPainLess Work?
 
-TBD
+Currently, VPainLess integrates only with [Vultr](https://www.vultr.com/). Users can create a group within VPainLess and associate it with a Vultr API key. With this setup, any client added to the group can easily create or renew a VPN with just a single click using the specified API key. Please note that you will be billed monthly for every instance created under your account. User management and instance oversight for your group are facilitated through the admin panel. You also, quite obviously, have the option to disable your API key directly on Vultr’s platform directly, or delete instances.
 
 ## Contributing
 
-TBD
+VPainLess is a personal hobby project with limited time for development. The current implementation meets my initial objectives. However, contributions from the community are very welcome. If you are interested in contributing, please refer to the [TODO](./docs/todos.md) list for areas that could use enhancement or development.

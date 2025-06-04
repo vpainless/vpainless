@@ -2,6 +2,7 @@ package core
 
 import (
 	"crypto/rand"
+	_ "embed"
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
@@ -26,122 +27,8 @@ type XrayTemplate struct {
 	Base                 string
 }
 
-const defaultXrayTemplate = `
-{
-  "inbounds": [
-    {
-      "listen": "0.0.0.0",
-      "port": 443,
-      "protocol": "vless",
-      "settings": {
-        "clients": [
-          {
-            "id": "%[1]s",
-            "flow": "xtls-rprx-vision"
-          }
-        ],
-        "decryption": "none"
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "show": false,
-          "dest": "%[2]s:443",
-          "xver": 0,
-          "serverNames": ["%[2]s"],
-          "privateKey": "%[3]s",
-          "minClientVer": "1.8.0",
-          "maxClientVer": "",
-          "maxTimeDiff": 0,
-          "shortIds": ["%[4]s"]
-        }
-      },
-      "sniffing": {
-        "enabled": true,
-        "destOverride": ["http", "tls", "quic"]
-      }
-    }
-  ],
-  "routing": {
-    "domainStrategy": "IPIfNonMatch",
-    "rules": [
-      {
-        "type": "field",
-        "outboundTag": "block",
-        "ip": [
-          "geoip:ir",
-          "geoip:private",
-          "192.168.0.0/16",
-          "10.0.0.0/8",
-          "172.16.0.0/12",
-          "127.0.0.0/8"
-        ]
-      },
-      {
-        "type": "field",
-        "outboundTag": "block",
-        "domain": [
-          "geosite:private",
-          "geosite:category-ir",
-          "snapp",
-          "digikala",
-          "tapsi",
-          "blogfa",
-          "bank",
-          "sb24.com",
-          "sheypoor.com",
-          "tebyan.net",
-          "beytoote.com",
-          "telewebion.com",
-          "Film2movie.ws",
-          "Setare.com",
-          "Filimo.com",
-          "Torob.com",
-          "Tgju.org",
-          "Sarzamindownload.com",
-          "downloadha.com",
-          "P30download.com",
-          "Sanjesh.org",
-          "domain:intrack.ir",
-          "domain:divar.ir",
-          "domain:irancell.ir",
-          "domain:yooz.ir",
-          "domain:iran-cell.com",
-          "domain:irancell.i-r",
-          "domain:shaparak.ir",
-          "domain:learnit.ir",
-          "domain:yooz.ir",
-          "domain:baadesaba.ir",
-          "domain:webgozar.ir",
-          "domain:dt.beyla.site"
-        ]
-      }
-    ]
-  },
-  "outbounds": [
-    {
-      "protocol": "freedom",
-      "tag": "direct"
-    },
-    {
-      "protocol": "blackhole",
-      "tag": "block"
-    }
-  ],
-  "log": {
-    "loglevel": "warning"
-  },
-  "policy": {
-    "levels": {
-      "0": {
-        "handshake": 3,
-        "connIdle": 180
-      }
-    }
-  }
-}
-`
+//go:embed default/xray.json
+var defaultXrayTemplate string
 
 // NewRealityConfig creates a new reality config.
 //

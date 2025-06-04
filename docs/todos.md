@@ -30,10 +30,11 @@
 1. ~FE: Admin panel~
 1. ~Add a go routine to setup instances~
 1. ~Effortless setup on vultr~
-1. Move to anonymous repo.
+1. ~Move to anonymous repo.~
 
 ## For later:
 
+1. Improve installation process (publish on docker hub and pull instead of making locally on servers)
 1. FE: Admin panel: Analytics
 1. FE: Admin panel: Edit and delete users
 1. Add create and updated at to all tables
